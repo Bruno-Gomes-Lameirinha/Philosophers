@@ -29,6 +29,8 @@ int main(int argc, char **argv)
 		printf("right number of ags\n");
 		//checar os argumentos;
 		// inciciar a as threads
+		//  numeros de garfos == numeros de filosofos
+		//eat, think, sleep
 		// mutex nos garfos
 	}
 	return(0);
