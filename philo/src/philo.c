@@ -73,21 +73,21 @@ void *ft_philo_routine(void *arg)
 {
 	(void)arg;
 	printf("acessando routine\n");
+	
 	return(NULL);
 }
 
 void	ft_init_philos(t_args *args)
 {
-	//pthread_t	philosopher[args->n_philo];
 	int			i;
 
 	args->ph = malloc(sizeof(t_philo) * args->n_philo);
-
 	i = 0;
 	while (i < args->n_philo)
 	{
-		pthread_create(&args->ph[i].philo + i, NULL, &ft_philo_routine, NULL);
+		pthread_create(&args->ph[i].philo, NULL, &ft_philo_routine, NULL);
 		printf("Trhead %d has been created\n", i);
+		printf("o identificador da thread é %ld \n", args->ph[i].philo);
 		i++;
 	}
 	i = 0;
