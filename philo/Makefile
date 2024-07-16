@@ -4,7 +4,7 @@ SRCDIR = src
 INCDIR = includes
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread
+CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread -g
 
 SRC = $(SRCDIR)/philo.c
 

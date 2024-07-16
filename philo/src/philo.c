@@ -1,5 +1,30 @@
 #include "../includes/philo.h"
 
+int	ft_isdigit(int c)
+{
+	if (c < '0' || c > '9')
+	{
+		return (0);
+	}
+	return (1);
+}
+
+int	ft_is_num(char *num)
+{
+	int	i;
+
+	i = 0;
+	if (num[0] == '-')
+		i++;
+	while (num[i])
+	{
+		if (!ft_isdigit(num[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	ft_wrong_args(void)
 {
 	printf(" ____________________________________________________ \n");
@@ -16,8 +41,70 @@ void	ft_wrong_args(void)
 	printf("\n");
 }
 
+void	ft_free_memory(t_args *args)
+{
+	free (args);
+}
+
+void	ft_init_args(t_args *args, char **argv, int argc)
+{
+	int i;
+
+	i = 1;
+	while (i < argc)
+	{
+		if (!ft_is_num(argv[i]))
+		{
+			ft_free_memory(args);
+			printf("Non numeric argument found\n");
+			exit(1);
+		}
+		i++;
+	}
+	args->n_philo = atoi(argv[1]);
+	args->time_to_die = atoi(argv[2]);
+	args->time_to_eat = atoi(argv[3]);
+	args->time_to_sleep = atoi(argv[4]);
+	if (argc == 6)
+		args->n_times_to_eat = atoi(argv[5]);
+	
+}
+void *ft_philo_routine(void *arg)
+{
+	(void)arg;
+	printf("acessando routine\n");
+	return(NULL);
+}
+
+void	ft_init_philos(t_args *args)
+{
+	//pthread_t	philosopher[args->n_philo];
+	int			i;
+
+	args->ph = malloc(sizeof(t_philo) * args->n_philo);
+
+	i = 0;
+	while (i < args->n_philo)
+	{
+		pthread_create(&args->ph[i].philo + i, NULL, &ft_philo_routine, NULL);
+		printf("Trhead %d has been created\n", i);
+		i++;
+	}
+	i = 0;
+	while (i < args->n_philo)
+	{
+		pthread_join(args->ph[i].philo, NULL);
+		printf("Trhead %d has finished his execution\n", i);
+		i++;
+	}
+}
+
 int main(int argc, char **argv)
 {
+	t_args	*args;
+
+	args = (t_args *)malloc(sizeof(t_args));
+
 	if (argc != 5 && argc != 6)
 	{
 		ft_wrong_args();
@@ -25,13 +112,18 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		printf("%s\n",argv[1]);
-		printf("right number of ags\n");
-		//checar os argumentos;
+		ft_init_args(args, argv, argc);
+		ft_init_philos(args);
+		// printf("%d\n", args->time_to_die);
+		// printf("%d\n", args->time_to_eat);
+		// printf("%d\n", args->time_to_sleep);
+		// if ( argc == 6)
+		// 	printf("%d\n", args->n_times_to_eat);
 		// inciciar a as threads
 		//  numeros de garfos == numeros de filosofos
 		//eat, think, sleep
 		// mutex nos garfos
 	}
+	ft_free_memory(args);
 	return(0);
 }
