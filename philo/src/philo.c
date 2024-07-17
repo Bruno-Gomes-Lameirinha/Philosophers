@@ -43,6 +43,8 @@ void	ft_wrong_args(void)
 
 void	ft_free_memory(t_args *args)
 {
+	free(args->forks);
+	free(args->ph);
 	free (args);
 }
 
@@ -71,25 +73,59 @@ void	ft_init_args(t_args *args, char **argv, int argc)
 }
 void *ft_philo_routine(void *arg)
 {
-	(void)arg;
-	printf("acessando routine\n");
+	t_philo *philo = (t_philo *)arg;
+
+	printf("Thread %d acessando routine\n", philo->id);
 	
 	return(NULL);
 }
 
-void	ft_init_philos(t_args *args)
+void	ft_init_forks(t_args *args)
 {
-	int			i;
+	int	i;
 
-	args->ph = malloc(sizeof(t_philo) * args->n_philo);
+	i = 0;
+	args->forks = malloc(sizeof(pthread_mutex_t) * args->n_philo);
+	while (i < args->n_philo)
+	{
+		pthread_mutex_init(&args->forks[i], NULL);
+		pthread_mutex_init(&args->ph[i].reaper, NULL);
+		i++;
+		printf("fork %d has been created\n", i);
+	}
+}
+
+void	ft_destroy_forks(t_args *args)
+{
+	int	i;
+
 	i = 0;
 	while (i < args->n_philo)
 	{
-		pthread_create(&args->ph[i].philo, NULL, &ft_philo_routine, NULL);
-		printf("Trhead %d has been created\n", i);
-		printf("o identificador da thread é %ld \n", args->ph[i].philo);
+		pthread_mutex_destroy(&args->forks[i]);
+		pthread_mutex_destroy(&args->ph[i].reaper);
 		i++;
 	}
+}
+
+void	ft_init_philos(t_args *args)
+{
+	int	i;
+
+	args->ph = malloc(sizeof(t_philo) * args->n_philo);
+	i = 0;
+	ft_init_forks(args);
+	while (i < args->n_philo)
+	{
+		args->ph[i].id = i + 1;
+		args->ph[i].rules = args;
+		args->ph[i].l_fork = &args->forks[i];
+		args->ph[i].r_fork = &args->forks[(i + 1) % args->n_philo];
+		pthread_create(&args->ph[i].philo, NULL, &ft_philo_routine, (void*)&args->ph[i]);
+		printf("Trhead %d has been created\n", i);
+		i++;
+	}
+	usleep(1000);
 	i = 0;
 	while (i < args->n_philo)
 	{
@@ -123,7 +159,9 @@ int main(int argc, char **argv)
 		//  numeros de garfos == numeros de filosofos
 		//eat, think, sleep
 		// mutex nos garfos
+
 	}
+	ft_destroy_forks(args);
 	ft_free_memory(args);
 	return(0);
 }
