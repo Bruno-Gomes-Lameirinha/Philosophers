@@ -88,7 +88,12 @@ void *ft_philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 
-	printf("Thread %d acessando routine in %lld miliseconds\n", philo->id, (current_time() - philo->epoch));
+	pthread_mutex_lock(philo->r_fork);
+	pthread_mutex_lock(philo->l_fork);
+	printf("%lld  miliseconds Philospher %d got the fork \n", (current_time() - philo->epoch), philo->id);
+	usleep(100);
+	pthread_mutex_unlock(philo->r_fork);
+	pthread_mutex_unlock(philo->l_fork);
 	return(NULL);
 }
 
