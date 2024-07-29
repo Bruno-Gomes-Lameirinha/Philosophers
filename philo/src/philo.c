@@ -1,5 +1,12 @@
 #include "../includes/philo.h"
 
+long long current_time(void)
+{
+	struct timeval timestamp;
+	gettimeofday(&timestamp, NULL);
+	return (timestamp.tv_sec * 1000LL + timestamp.tv_usec / 1000);
+}
+
 int	ft_isdigit(int c)
 {
 	if (c < '0' || c > '9')
@@ -75,8 +82,7 @@ void *ft_philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 
-	printf("Thread %d acessando routine\n", philo->id);
-	
+	printf("Thread %d acessando routine in %lld miliseconds\n", philo->id, (current_time() - philo->epoch));
 	return(NULL);
 }
 
@@ -118,6 +124,7 @@ void	ft_init_philos(t_args *args)
 	while (i < args->n_philo)
 	{
 		args->ph[i].id = i + 1;
+		args->ph[i].epoch = current_time();
 		args->ph[i].rules = args;
 		args->ph[i].l_fork = &args->forks[i];
 		args->ph[i].r_fork = &args->forks[(i + 1) % args->n_philo];
@@ -125,12 +132,11 @@ void	ft_init_philos(t_args *args)
 		printf("Trhead %d has been created\n", i);
 		i++;
 	}
-	usleep(1000);
 	i = 0;
 	while (i < args->n_philo)
 	{
 		pthread_join(args->ph[i].philo, NULL);
-		printf("Trhead %d has finished his execution\n", i);
+		printf("Trhead %d has finished his execution in %lld miliseconds\n", i, (current_time() - args->ph[i].epoch));
 		i++;
 	}
 }
@@ -159,7 +165,6 @@ int main(int argc, char **argv)
 		//  numeros de garfos == numeros de filosofos
 		//eat, think, sleep
 		// mutex nos garfos
-
 	}
 	ft_destroy_forks(args);
 	ft_free_memory(args);

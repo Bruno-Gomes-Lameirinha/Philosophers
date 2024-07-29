@@ -18,6 +18,7 @@ typedef struct s_philo
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	reaper;
 	int				times_eaten;
+	long long		epoch;
 	struct args		*rules;
 }	t_philo;
 
@@ -32,14 +33,15 @@ typedef struct args
 	pthread_mutex_t *forks;
 }	t_args;
 
-void    ft_wrong_args(void);
-void	ft_free_memory(t_args *args);
-void	ft_init_args(t_args *args, char **argv, int argc);
-int		ft_is_num(char *num);
-int		ft_isdigit(int c);
-void	ft_init_philos(t_args *args);
-void 	*ft_philo_routine(void *arg);
-void	ft_init_forks(t_args *args);
-void	ft_destroy_forks(t_args *args);
+void		ft_wrong_args(void);
+void		ft_free_memory(t_args *args);
+void		ft_init_args(t_args *args, char **argv, int argc);
+int			ft_is_num(char *num);
+int			ft_isdigit(int c);
+void		ft_init_philos(t_args *args);
+void		*ft_philo_routine(void *arg);
+void		ft_init_forks(t_args *args);
+void		ft_destroy_forks(t_args *args);
+long long	current_time(void);
 
 #endif
