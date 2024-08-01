@@ -88,12 +88,23 @@ void *ft_philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 
-	pthread_mutex_lock(philo->r_fork);
-	pthread_mutex_lock(philo->l_fork);
-	printf("%lld  miliseconds Philospher %d got the fork \n", (current_time() - philo->epoch), philo->id);
-	usleep(100);
+	if (philo->id % 2 == 0)
+    {
+        pthread_mutex_lock(philo->r_fork);
+        pthread_mutex_lock(philo->l_fork);
+    }
+    else	
+    {
+        pthread_mutex_lock(philo->l_fork);
+        pthread_mutex_lock(philo->r_fork);
+    }
+	printf("%lld Philospher %d got the fork \n", (current_time() - philo->epoch), philo->id);
+	printf("%lld Philospher %d is eating \n", (current_time() - philo->epoch), philo->id);
+	usleep(philo->rules->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
+	ft_think(philo);
+	
 	return(NULL);
 }
 
@@ -149,6 +160,13 @@ void	ft_init_philos(t_args *args)
 	}
 }
 
+void	ft_think(t_philo *args)
+{
+	printf("%lld Philospher %d is sleeping \n", (current_time() - args->epoch), args->id);
+	usleep(args->rules->time_to_sleep * 1000);
+	printf("%lld Philospher %d is thinking \n", (current_time() - args->epoch), args->id);
+}
+
 int main(int argc, char **argv)
 {
 	t_args	*args;
@@ -163,8 +181,6 @@ int main(int argc, char **argv)
 		args = (t_args *)malloc(sizeof(t_args));
 		ft_init_args(args, argv, argc);
 		ft_init_philos(args);
-		//eat, think, sleep
-		// mutex nos garfos
 	}
 	ft_destroy_forks(args);
 	ft_free_memory(args);

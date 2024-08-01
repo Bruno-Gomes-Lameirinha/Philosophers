@@ -43,5 +43,6 @@ void		*ft_philo_routine(void *arg);
 void		ft_init_forks(t_args *args);
 void		ft_destroy_forks(t_args *args);
 long long	current_time(void);
+void		ft_think(t_philo *args);
 
 #endif
